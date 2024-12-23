@@ -1,0 +1,76 @@
+/* General reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #6e7e85, #8ed817);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #fff;
+    overflow: hidden;
+}
+
+.Login {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 350px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.Login:hover {
+    transform: translateY(-10px);
+}
+
+#appName {
+    font-size: 28px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+button#microsoft-login {
+    background-color: #0078d4;
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 30px;
+    cursor: pointer;
+    margin-top: 30px;
+    transition: background-color 0.3s, transform 0.2s;
+    width: 100%;
+    font-weight: 500;
+}
+
+button#microsoft-login:hover {
+    background-color: #005a8b;
+    transform: scale(1.05);
+}
+
+button#microsoft-login:active {
+    transform: scale(1);
+}
+
+#status {
+    font-size: 14px;
+    color: #777;
+    margin-top: 15px;
+}
+
+.copyright {
+    font-size: 12px;
+    color: #bbb;
+    margin-top: 25px;
+    opacity: 0.7;
+}
