@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
-
+import { onChildAdded } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -14,10 +14,8 @@ const firebaseConfig = {
     measurementId: "G-DT6LXKH4FB"
 };
 
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
 const database = getDatabase(app);//by passing app parameter i told the firebase that i want to interact with the realtime database 
 
 // DOM Elements
@@ -27,21 +25,20 @@ const messageBody = document.getElementById("messageBody");
 const inputMSG = document.getElementById("inputMSG");
 const sendBTN = document.getElementById("sendBTN");
 
-
 // Reference to the 'messages' node in the Realtime Database
 const messagesRef = ref(database, 'messages'); //1s para-indicates work with realtime database  //2nd para-indicate the node where chat stored    //messagesRef will point to the location in your Firebase database
 // Function to send a message
 function sendMessage() {
-    const messageText = inputMSG.value.trim(); // Remove leading/trailing spaces
+    const messageText = inputMSG.value.trim(); 
 
-    if (messageText === '') return; // Do nothing if input is empty
+    if (messageText === '') return; 
 
     // Message object to store in Firebase
     const messageData = {
         text: messageText,
         timestamp: Date.now(),
         user: {
-            name: userName.textContent || "Anonymous", // Default to 'Anonymous' if no name
+            name: userName.textContent || "Anonymous", // Default to 'Anonymous' (if no name i get from)
             img: userIMG.src || "" // Default to an empty string if no image
         }
     };
@@ -57,20 +54,15 @@ function sendMessage() {
             messageDiv.innerHTML = `
                 <p>${messageText}</p>
                 <span>${new Date(messageData.timestamp).toLocaleTimeString()}</span>`;
+            
             messageBody.appendChild(messageDiv);
-
-            // Clear the input field
             inputMSG.value = "";
-
-            // Scroll to the bottom of the messageBody
             messageBody.scrollTop = messageBody.scrollHeight;
         })
         .catch((error) => {
             console.error('Error sending message to Firebase:', error);
             alert('Message could not be sent. Please try again.');
         });
-  
-    
 }
 
 // Add Event Listeners
@@ -80,3 +72,34 @@ inputMSG.addEventListener('keypress', (event) => {
         sendMessage();
     }
 });
+
+function receiveMessages() {
+    // Listen for new messages added to the 'messages' node
+    onChildAdded(messagesRef, (snapshot) => {
+        const messageData = snapshot.val(); // Get the message data from the snapshot
+
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add('message', 'received');
+
+        // Format the message content
+        messageDiv.innerHTML = `
+            <div class="message-header">
+                <img src="${messageData.user.img || 'default-avatar.png'}" alt="User Image" class="user-img">
+                <span class="user-name">${messageData.user.name}</span>
+                <span class="timestamp">${new Date(messageData.timestamp).toLocaleTimeString()}</span>
+            </div>
+            <p>${messageData.text}</p>
+        `;
+
+        messageBody.appendChild(messageDiv);
+        messageBody.scrollTop = messageBody.scrollHeight;
+    });
+}
+
+receiveMessages();
+
+
+
+
+
+
