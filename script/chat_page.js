@@ -2,38 +2,34 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebas
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
 import { onChildAdded } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
 
-// Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyC51WaB_HGCmQGABrEFxc3hWBdkUEVnkyI",
     authDomain: "app1-ed7d8.firebaseapp.com",
     databaseURL: "https://app1-ed7d8-default-rtdb.firebaseio.com",
     projectId: "app1-ed7d8",
-    storageBucket: "app1-ed7d8.appspot.com", // Fixed typo
+    storageBucket: "app1-ed7d8.appspot.com", 
     messagingSenderId: "342309820112",
     appId: "1:342309820112:web:b8753b3d9aac4341e930d5",
     measurementId: "G-DT6LXKH4FB"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const database = getDatabase(app);//by passing app parameter i told the firebase that i want to interact with the realtime database 
+const database = getDatabase(app);//by passing app parameter i told the firebase that i want to interact with the realtime database/////////////////
 
-// DOM Elements
+/////////////////////////////////////////////////////////////////////
 const userIMG = document.getElementById("userIMG");
 const userName = document.getElementById("userName");
 const messageBody = document.getElementById("messageBody");
 const inputMSG = document.getElementById("inputMSG");
 const sendBTN = document.getElementById("sendBTN");
 
-// Reference to the 'messages' node in the Realtime Database
-const messagesRef = ref(database, 'messages'); //1s para-indicates work with realtime database  //2nd para-indicate the node where chat stored    //messagesRef will point to the location in your Firebase database
-// Function to send a message
+const messagesRef = ref(database, 'messages'); //1s para-indicates work with realtime database  //2nd para-indicate the node where chat stored   //messagesRef will point to the location in your Firebase database
+//send MSG
 function sendMessage() {
     const messageText = inputMSG.value.trim(); 
 
     if (messageText === '') return; 
 
-    // Message object to store in Firebase
     const messageData = {
         text: messageText,
         timestamp: Date.now(),
@@ -43,12 +39,10 @@ function sendMessage() {
         }
     };
 
-    // Push message to Firebase Realtime Database
     push(messagesRef, messageData)
         .then(() => {
             console.log('Message successfully sent to Firebase');
 
-            // Add the message to the UI
             const messageDiv = document.createElement("div");
             messageDiv.classList.add('message', 'sent');
             messageDiv.innerHTML = `
@@ -64,8 +58,6 @@ function sendMessage() {
             alert('Message could not be sent. Please try again.');
         });
 }
-
-// Add Event Listeners
 sendBTN.addEventListener('click', sendMessage);
 inputMSG.addEventListener('keypress', (event) => {
     if (event.key === 'Enter') {
@@ -74,14 +66,13 @@ inputMSG.addEventListener('keypress', (event) => {
 });
 
 function receiveMessages() {
-    // Listen for new messages added to the 'messages' node
+    
     onChildAdded(messagesRef, (snapshot) => {
-        const messageData = snapshot.val(); // Get the message data from the snapshot
+        const messageData = snapshot.val(); 
 
         const messageDiv = document.createElement("div");
         messageDiv.classList.add('message', 'received');
 
-        // Format the message content
         messageDiv.innerHTML = `
             <div class="message-header">
                 <img src="${messageData.user.img || 'default-avatar.png'}" alt="User Image" class="user-img">

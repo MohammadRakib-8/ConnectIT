@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
 import { getAuth, signInWithPopup, OAuthProvider } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
 
-// Firebase configuration
+
 const firebaseConfig = {
     apiKey: "AIzaSyC51WaB_HGCmQGABrEFxc3hWBdkUEVnkyI",
     authDomain: "app1-ed7d8.firebaseapp.com",
@@ -35,6 +35,6 @@ login.addEventListener('click', (event) => {
         .catch((error) => {
           
             const errorMessage = error.message || "An unknown error occurred.";
-            status.textContent = `Login failed. Error: ${errorMessage}`; // Provide error message to the user
+            status.textContent = `Login failed. Error: ${errorMessage}`; 
         });
 });
