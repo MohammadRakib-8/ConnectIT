@@ -16,6 +16,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new OAuthProvider('microsoft.com');
+const connected='false';
 
 const login = document.getElementById("microsoft-login");
 const status = document.getElementById("status");
@@ -27,10 +28,15 @@ login.addEventListener('click', (event) => {
             const credential = OAuthProvider.credentialFromResult(result);
             const accessToken = credential.accessToken;
             const idToken = credential.idToken;
-
+           //const uid=user.result.uid
+          // console.log(uid);
             console.log("Successfully logged in");
-            console.log("User Info:", result.user); 
+            console.log("User Info:", result.user);
+            console.log("UID",result.user.uid);
+            const r=console.log("ID",result.user.email.substring(0,10));
             status.textContent = `Welcome, ${result.user.displayName}`; 
+            window.location.href='../html/chat_page.html';
+            // connected='true';
         })
         .catch((error) => {
           
@@ -38,3 +44,11 @@ login.addEventListener('click', (event) => {
             status.textContent = `Login failed. Error: ${errorMessage}`; 
         });
 });
+
+// if(connected=='true'){
+//     window.location.href='../html/chat_page.html';
+
+// }
+// else{
+//     status.innerHTML='Please give correct info';
+//}

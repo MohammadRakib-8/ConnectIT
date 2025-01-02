@@ -1,7 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
 import { onChildAdded } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
-
 const firebaseConfig = {
     apiKey: "AIzaSyC51WaB_HGCmQGABrEFxc3hWBdkUEVnkyI",
     authDomain: "app1-ed7d8.firebaseapp.com",
@@ -23,7 +22,7 @@ const messageBody = document.getElementById("messageBody");
 const inputMSG = document.getElementById("inputMSG");
 const sendBTN = document.getElementById("sendBTN");
 
-const messagesRef = ref(database, 'messages'); //1s para-indicates work with realtime database  //2nd para-indicate the node where chat stored   //messagesRef will point to the location in your Firebase database
+const messagesRef = ref(database, 'PersonalMSG'); //1s para-indicates work with realtime database  //2nd para-indicate the node where chat stored   //messagesRef will point to the location in your Firebase database
 //send MSG
 function sendMessage() {
     const messageText = inputMSG.value.trim(); 
@@ -88,7 +87,6 @@ function receiveMessages() {
 }
 
 receiveMessages();
-
 
 
 
