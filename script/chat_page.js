@@ -1,6 +1,9 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
 import { onChildAdded } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
+//import { getAuth } from  "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+
 const firebaseConfig = {
     apiKey: "AIzaSyC51WaB_HGCmQGABrEFxc3hWBdkUEVnkyI",
     authDomain: "app1-ed7d8.firebaseapp.com",
@@ -14,7 +17,18 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);//by passing app parameter i told the firebase that i want to interact with the realtime database/////////////////
+const auth=getAuth();
+// const user=auth.currentUser;
 
+// if(user){
+
+//     console.log(user.uid);
+
+// }
+// else{
+//     console.log("please login")
+// }
+// const user = auth.currentUser;
 /////////////////////////////////////////////////////////////////////
 const userIMG = document.getElementById("userIMG");
 const userName = document.getElementById("userName");
@@ -88,7 +102,16 @@ function receiveMessages() {
 
 receiveMessages();
 
-
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        // User is signed in
+        console.log("User UID accessed in chat.js:", user.uid);
+       console.log(user.email) ;
+    } else {
+        // No user is signed in
+        console.log("No user logged in. Please log in first.");
+    }
+});
 
 
 
