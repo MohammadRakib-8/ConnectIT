@@ -1,2 +1,2 @@
 # ConnectIT
-A chat app by me
+A chat app by me 

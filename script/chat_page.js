@@ -31,10 +31,34 @@ const auth=getAuth();
 // const user = auth.currentUser;
 /////////////////////////////////////////////////////////////////////
 const userIMG = document.getElementById("userIMG");
-const userName = document.getElementById("userName");
+//const userName = document.getElementById("userName");
+const userInfo=document.getElementsByClassName("userInfo");
 const messageBody = document.getElementById("messageBody");
 const inputMSG = document.getElementById("inputMSG");
 const sendBTN = document.getElementById("sendBTN");
+let currentUser=null;
+
+
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        // User is signed in
+        console.log("User UID accessed in chat.js:", user.uid);
+       console.log(user.email) ;
+       console.log(user.displayName);
+      // userInfo.innerHtml=`<p>${user.displayName}</p>`;
+       currentUser=user;
+       console.log(currentUser);
+    } else {
+        // No user is signed in
+        console.log("No user logged in. Please log in first.");
+        currentUser=null;
+        
+    }
+});
+
+
+
+
 
 const messagesRef = ref(database, 'PersonalMSG'); //1s para-indicates work with realtime database  //2nd para-indicate the node where chat stored   //messagesRef will point to the location in your Firebase database
 //send MSG
@@ -47,8 +71,8 @@ function sendMessage() {
         text: messageText,
         timestamp: Date.now(),
         user: {
-            name: userName.textContent || "Anonymous", // Default to 'Anonymous' (if no name i get from)
-            img: userIMG.src || "" // Default to an empty string if no image
+            name: currentUser.displayName || "Anonymous", // Default to 'Anonymous' (if no name i get from)
+            //img: userIMG.src || "" // Default to an empty string if no image
         }
     };
 
@@ -56,20 +80,25 @@ function sendMessage() {
         .then(() => {
             console.log('Message successfully sent to Firebase');
 
-            const messageDiv = document.createElement("div");
-            messageDiv.classList.add('message', 'sent');
-            messageDiv.innerHTML = `
-                <p>${messageText}</p>
-                <span>${new Date(messageData.timestamp).toLocaleTimeString()}</span>`;
-            
-            messageBody.appendChild(messageDiv);
-            inputMSG.value = "";
-            messageBody.scrollTop = messageBody.scrollHeight;
+          
         })
         .catch((error) => {
             console.error('Error sending message to Firebase:', error);
             alert('Message could not be sent. Please try again.');
         });
+
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add('message', 'sent');
+        messageDiv.innerHTML = `
+            <span class="user-name">${messageData.user.name}</span>
+            <p>${messageText}</p>
+            <span>${new Date(messageData.timestamp).toLocaleTimeString()}</span>
+               
+`;
+        
+        messageBody.appendChild(messageDiv);
+        inputMSG.value = "";
+        messageBody.scrollTop = messageBody.scrollHeight;
 }
 sendBTN.addEventListener('click', sendMessage);
 inputMSG.addEventListener('keypress', (event) => {
@@ -89,7 +118,7 @@ function receiveMessages() {
         messageDiv.innerHTML = `
             <div class="message-header">
                 <img src="${messageData.user.img || 'default-avatar.png'}" alt="User Image" class="user-img">
-                <span class="user-name">${messageData.user.name}</span>
+                <span class="user-name">${messageData.user.displayName}</span>
                 <span class="timestamp">${new Date(messageData.timestamp).toLocaleTimeString()}</span>
             </div>
             <p>${messageData.text}</p>
@@ -102,16 +131,16 @@ function receiveMessages() {
 
 receiveMessages();
 
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        // User is signed in
-        console.log("User UID accessed in chat.js:", user.uid);
-       console.log(user.email) ;
-    } else {
-        // No user is signed in
-        console.log("No user logged in. Please log in first.");
-    }
-});
+// onAuthStateChanged(auth, (user) => {
+//     if (user) {
+//         // User is signed in
+//         console.log("User UID accessed in chat.js:", user.uid);
+//        console.log(user.email) ;
+//     } else {
+//         // No user is signed in
+//         console.log("No user logged in. Please log in first.");
+//     }
+// });
 
 
 
