@@ -18,6 +18,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);//by passing app parameter i told the firebase that i want to interact with the realtime database/////////////////
 const auth=getAuth();
+const user=auth.currentUser;
 // const user=auth.currentUser;
 
 // if(user){
@@ -36,7 +37,29 @@ const userInfo=document.getElementsByClassName("userInfo");
 const messageBody = document.getElementById("messageBody");
 const inputMSG = document.getElementById("inputMSG");
 const sendBTN = document.getElementById("sendBTN");
+const searchBox=document.getElementById("searchBox");
 let currentUser=null;
+
+
+
+
+// function search_box(){
+//     let input=searchBox.value.toUpperCase();
+//     user.providerData.forEach((profile)=>
+//     {
+//         let valueStore=profile.email.toUpperCase();
+//         console.log(valueStore);
+//         if(valueStore.includes(input)){
+//         searchBox.style.display="list-item";
+//         }
+//         else{
+//             searchBox.style.display="none";
+//         }
+//     })
+
+   
+// }
+
 
 
 onAuthStateChanged(auth, (user) => {
@@ -104,6 +127,7 @@ sendBTN.addEventListener('click', sendMessage);
 inputMSG.addEventListener('keypress', (event) => {
     if (event.key === 'Enter') {
         sendMessage();
+        search_box();
     }
 });
 
@@ -130,6 +154,55 @@ function receiveMessages() {
 }
 
 receiveMessages();
+
+// First, ensure you have a 'users' collection in Firebase
+// Structure should be:
+// users
+//   └── userId
+//       ├── email: "user@example.com"
+//       ├── displayName: "John Doe"
+//       └── otherData...
+
+async function search_box() {
+    const searchInput = document.getElementById('searchBox').value.toUpperCase();
+    const resultsContainer = document.getElementById('searchResults');
+    
+    // Clear previous results
+    resultsContainer.innerHTML = '';
+
+    if (searchInput.length < 2) {
+        resultsContainer.style.display = 'none';
+        return;
+    }
+
+    try {
+        // Query Firebase database
+        const usersRef = firebase.database().ref('users');
+        const snapshot = await usersRef.orderByChild('email').once('value');
+        
+        const allUsers = snapshot.val();
+        let hasMatches = false;
+
+        for (const userId in allUsers) {
+            const user = allUsers[userId];
+            const userEmail = user.email.toUpperCase();
+            
+            if (userEmail.includes(searchInput)) {
+                // Create result element
+                const div = document.createElement('div');
+                div.className = 'search-result-item';
+                div.textContent = `${user.displayName} (${user.email})`;
+                resultsContainer.appendChild(div);
+                hasMatches = true;
+            }
+        }
+
+        resultsContainer.style.display = hasMatches ? 'block' : 'none';
+    } catch (error) {
+        console.error('Search error:', error);
+        resultsContainer.style.display = 'none';
+    }
+}
 
 // onAuthStateChanged(auth, (user) => {
 //     if (user) {
