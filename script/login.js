@@ -24,7 +24,7 @@ const user=auth.currentUser;//ony set currentUser after auth
 const login = document.getElementById("microsoft-login");
 const status = document.getElementById("status");
 
-const messageRefRakibLogin=ref(database,'LoginInfo');
+var messageRefRakibLogin=ref(database,'LoginInfo');
 
 
 
@@ -48,7 +48,7 @@ login.addEventListener('click', (event) => {
 //User details saved in db
 
 const userQuery=query(messageRefRakibLogin,orderByChild("email"),equalTo(userRakib.email));
-console.log("User Query ".userQuery);
+console.log("User Query ",userQuery);
 
 get(userQuery)
 .then((snapshot)=>{
