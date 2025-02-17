@@ -1,9 +1,9 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
-import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
+import { getDatabase, ref, push,get,equalTo,orderByChild,query } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
 import { onChildAdded } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
 //import { getAuth } from  "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
-
+// import {messageRefRakibLogin}from "../script/login.js";
 const firebaseConfig = {
     apiKey: "AIzaSyC51WaB_HGCmQGABrEFxc3hWBdkUEVnkyI",
     authDomain: "app1-ed7d8.firebaseapp.com",
@@ -42,13 +42,12 @@ let currentUser=null;
 
 
 
-
 // function search_box(){
 //     let input=searchBox.value.toUpperCase();
 //     user.providerData.forEach((profile)=>
 //     {
 //         let valueStore=profile.email.toUpperCase();
-//         console.log(valueStore);
+//         console.log(valueStore);     
 //         if(valueStore.includes(input)){
 //         searchBox.style.display="list-item";
 //         }
@@ -155,54 +154,50 @@ function receiveMessages() {
 
 receiveMessages();
 
-// First, ensure you have a 'users' collection in Firebase
-// Structure should be:
-// users
-//   └── userId
-//       ├── email: "user@example.com"
-//       ├── displayName: "John Doe"
-//       └── otherData...
 
-async function search_box() {
-    const searchInput = document.getElementById('searchBox').value.toUpperCase();
-    const resultsContainer = document.getElementById('searchResults');
-    
-    // Clear previous results
-    resultsContainer.innerHTML = '';
-
-    if (searchInput.length < 2) {
-        resultsContainer.style.display = 'none';
-        return;
-    }
-
-    try {
-        // Query Firebase database
-        const usersRef = firebase.database().ref('users');
-        const snapshot = await usersRef.orderByChild('email').once('value');
+const messageRefRakibLogin=ref(database,'LoginInfo');
+function search_box(){
+    let searchInput=searchBox.value;
+      var userDataQuery=query(messageRefRakibLogin,orderByChild("email"),equalTo(searchInput));
+get(userDataQuery)
+.then((snapshot)=>{
+    if(snapshot.exists()){
+        console.log("User Found",searchInput);
+        searchBox.style.display="searchInput";
         
-        const allUsers = snapshot.val();
-        let hasMatches = false;
-
-        for (const userId in allUsers) {
-            const user = allUsers[userId];
-            const userEmail = user.email.toUpperCase();
-            
-            if (userEmail.includes(searchInput)) {
-                // Create result element
-                const div = document.createElement('div');
-                div.className = 'search-result-item';
-                div.textContent = `${user.displayName} (${user.email})`;
-                resultsContainer.appendChild(div);
-                hasMatches = true;
             }
-        }
+            else{
+                console.log("User not found");
+                searchBox.style.display="none";
+            }
+        })
 
-        resultsContainer.style.display = hasMatches ? 'block' : 'none';
-    } catch (error) {
-        console.error('Search error:', error);
-        resultsContainer.style.display = 'none';
+        .catch((error)=>{
+            console.log("Error appear",error);
+        });
     }
-}
+
+    if(searchBox){
+    searchBox.addEventListener('keypress',(event)=>{
+        if(event.key==='Enter'){
+        search_box();
+    }
+    }
+    );}
+else{
+        console.error("Elemnt withe searchBoxID",error)
+    }
+
+// for(let key in storeUser){
+//     let userData=storeUser[key].email
+//     if(){
+//         console.log(user.email+"is found");
+//     }
+
+// }
+
+
+
 
 // onAuthStateChanged(auth, (user) => {
 //     if (user) {
