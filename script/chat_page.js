@@ -38,6 +38,7 @@ const messageBody = document.getElementById("messageBody");
 const inputMSG = document.getElementById("inputMSG");
 const sendBTN = document.getElementById("sendBTN");
 const searchBox=document.getElementById("searchBox");
+const searchResults=document.getElementById("searchResults")
 let currentUser=null;
 
 
@@ -126,7 +127,7 @@ sendBTN.addEventListener('click', sendMessage);
 inputMSG.addEventListener('keypress', (event) => {
     if (event.key === 'Enter') {
         sendMessage();
-        search_box();
+       // search_box();
     }
 });
 
@@ -156,19 +157,34 @@ receiveMessages();
 
 
 const messageRefRakibLogin=ref(database,'LoginInfo');
+
 function search_box(){
-    let searchInput=searchBox.value;
-      var userDataQuery=query(messageRefRakibLogin,orderByChild("email"),equalTo(searchInput));
+    let searchInput=searchBox.value.trim().toLowerCase();
+      var userDataQuery=query(messageRefRakibLogin,orderByChild("email"));
 get(userDataQuery)
 .then((snapshot)=>{
-    if(snapshot.exists()){
-        console.log("User Found",searchInput);
-        searchBox.style.display="searchInput";
+    searchResults.innerHTML="";
+    if(snapshot.exists()){  //check if any user data including eamil exist in database        
+    //  console.log("User Found");
+//searchBox.style.display="block";
+        snapshot.forEach((childsnapshots) => {
+let userData=childsnapshots.val();
+let email=userData.email.toLowerCase();
+if(email.includes(searchInput)){
+    console.log("User Found");
+
+let emailResultList=document.createElement("li");
+emailResultList.textContent=userData.email;
+emailResultList.classList.add("resultList");// For CSS
+emailResultList.onclick=()=>selectUser(userData.email);
+searchResults.appendChild(emailResultList);
+
+}});
         
             }
             else{
                 console.log("User not found");
-                searchBox.style.display="none";
+                //searchBox.style.display="";
             }
         })
 
@@ -176,12 +192,17 @@ get(userDataQuery)
             console.log("Error appear",error);
         });
     }
+function selectUser(email){
+    searchBox.value=email;
+searchResults.innerHTML="";
+
+}
 
     if(searchBox){
-    searchBox.addEventListener('keypress',(event)=>{
-        if(event.key==='Enter'){
+    searchBox.addEventListener("keyup",(event)=>{
+        // if(event.key==='Enter'){
         search_box();
-    }
+   // }
     }
     );}
 else{
