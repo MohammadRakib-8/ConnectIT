@@ -161,6 +161,11 @@ const messageRefRakibLogin=ref(database,'LoginInfo');
 function search_box(){
     let searchInput=searchBox.value.trim().toLowerCase();
       var userDataQuery=query(messageRefRakibLogin,orderByChild("email"));
+
+      if(searchInput===""){
+        searchResults.innerHTML="";
+return;
+    }
 get(userDataQuery)
 .then((snapshot)=>{
     searchResults.innerHTML="";
@@ -179,11 +184,18 @@ emailResultList.classList.add("resultList");// For CSS
 emailResultList.onclick=()=>selectUser(userData.email);
 searchResults.appendChild(emailResultList);
 
-}});
+}
+
+});
+if(searchResults.innerHTML===""){
+    console.log("User not Found");
+    searchResults.innerHTML="<li>No result found Dear 🤨​​</li>"
+    return;
+    }
         
             }
             else{
-                console.log("User not found");
+              
                 //searchBox.style.display="";
             }
         })
@@ -206,7 +218,7 @@ searchResults.innerHTML="";
     }
     );}
 else{
-        console.error("Elemnt withe searchBoxID",error)
+        console.error("Elemnt withe searchBoxID",error);
     }
 
 // for(let key in storeUser){
