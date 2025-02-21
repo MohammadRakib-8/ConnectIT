@@ -90,7 +90,17 @@
   #appName {
     font-size: 24px;
     font-weight: bold;
+    align-items: center;
     color: #0078d4;
+    display: flex;
+  justify-content: center;  
+  align-items: center;      
+  height: 100vh;  
+  }
+  #welcomemsg{
+    font-size:20px;
+    font-weight: lighter;
+    color:#000;
   }
   
   #logoutIMG {

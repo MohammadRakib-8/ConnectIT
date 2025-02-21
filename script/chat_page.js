@@ -38,7 +38,8 @@ const messageBody = document.getElementById("messageBody");
 const inputMSG = document.getElementById("inputMSG");
 const sendBTN = document.getElementById("sendBTN");
 const searchBox=document.getElementById("searchBox");
-const searchResults=document.getElementById("searchResults")
+const searchResults=document.getElementById("searchResults");
+const chatMain=document.getElementsByClassName("chat-main")[0];
 let currentUser=null;
 
 
@@ -123,13 +124,13 @@ function sendMessage() {
         inputMSG.value = "";
         messageBody.scrollTop = messageBody.scrollHeight;
 }
-sendBTN.addEventListener('click', sendMessage);
-inputMSG.addEventListener('keypress', (event) => {
-    if (event.key === 'Enter') {
-        sendMessage();
-       // search_box();
-    }
-});
+// sendBTN.addEventListener('click', sendMessage);
+// inputMSG.addEventListener('keypress', (event) => {
+//     if (event.key === 'Enter') {
+//         sendMessage();
+//        // search_box();
+//     }
+// });
 
 function receiveMessages() {
     
@@ -153,7 +154,7 @@ function receiveMessages() {
     });
 }
 
-receiveMessages();
+// receiveMessages();
 
 
 const messageRefRakibLogin=ref(database,'LoginInfo');
@@ -169,7 +170,7 @@ return;
 get(userDataQuery)
 .then((snapshot)=>{
     searchResults.innerHTML="";
-    if(snapshot.exists()){  //check if any user data including eamil exist in database        
+    if(snapshot.exists()){         
     //  console.log("User Found");
 //searchBox.style.display="block";
         snapshot.forEach((childsnapshots) => {
@@ -180,24 +181,26 @@ if(email.includes(searchInput)){
 
 let emailResultList=document.createElement("li");
 emailResultList.textContent=userData.email;
-emailResultList.classList.add("resultList");// For CSS
-emailResultList.onclick=()=>selectUser(userData.email);
-searchResults.appendChild(emailResultList);
+emailResultList.classList.add("resultList");// CSS
+emailResultList.onclick=()=>{
+    selectUser(userData.email);
+    userChatOpen();
 
 }
-
+searchResults.appendChild(emailResultList);
+}
 });
+
 if(searchResults.innerHTML===""){
     console.log("User not Found");
     searchResults.innerHTML="<li>No result found Dear 🤨​​</li>"
     return;
     }
-        
-            }
-            else{
+}
+            // else{
               
-                //searchBox.style.display="";
-            }
+            //     //searchBox.style.display="";
+            // }
         })
 
         .catch((error)=>{
@@ -219,6 +222,17 @@ searchResults.innerHTML="";
     );}
 else{
         console.error("Elemnt withe searchBoxID",error);
+    }
+
+
+    function userChatOpen(){
+        chatMain.innerHTML="";
+let createDiv=document.createElement("div");
+createDiv.classList.add("bottomArea");
+createDiv.innerHTML=`<input type="text" placeholder="Type your message" id="inputMSG">
+                <button id="sendBTN">SEND</button>`;
+                chatMain.appendChild(createDiv);
+
     }
 
 // for(let key in storeUser){
