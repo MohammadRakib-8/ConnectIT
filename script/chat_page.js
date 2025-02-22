@@ -225,13 +225,22 @@ else{
     }
 
 
-    function userChatOpen(){
-        chatMain.innerHTML="";
-let createDiv=document.createElement("div");
-createDiv.classList.add("bottomArea");
-createDiv.innerHTML=`<input type="text" placeholder="Type your message" id="inputMSG">
+function userChatOpen(){
+chatMain.innerHTML="";
+let bottomAreaDiv=document.createElement("div");
+bottomAreaDiv.classList.add("bottomArea");
+bottomAreaDiv.innerHTML=`<input type="text" placeholder="Type your message" id="inputMSG">
                 <button id="sendBTN">SEND</button>`;
-                chatMain.appendChild(createDiv);
+                chatMain.appendChild(bottomAreaDiv);
+
+let topAreaDiv=document.createElement("div");
+topAreaDiv.classList.add("topArea");
+topAreaDiv.innerHTML=`<p id="appNameTop">Connect IT</p>
+                <img src="logout.png" id="logoutIMG">`
+chatMain.append(topAreaDiv);
+
+
+                
 
     }
 
