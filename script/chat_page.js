@@ -34,12 +34,12 @@ const user=auth.currentUser;
 const userIMG = document.getElementById("userIMG");
 //const userName = document.getElementById("userName");
 const userInfo=document.getElementsByClassName("userInfo");
-const messageBody = document.getElementById("messageBody");
-const inputMSG = document.getElementById("inputMSG");
-const sendBTN = document.getElementById("sendBTN");
+//const messageBody = document.getElementById("messageBody");
+
 const searchBox=document.getElementById("searchBox");
 const searchResults=document.getElementById("searchResults");
 const chatMain=document.getElementsByClassName("chat-main")[0];
+//const fullAreaDiv=document.getElementsByClassName("fullArea")[0];
 let currentUser=null;
 
 
@@ -122,15 +122,11 @@ function sendMessage() {
         
         messageBody.appendChild(messageDiv);
         inputMSG.value = "";
-        messageBody.scrollTop = messageBody.scrollHeight;
+        messageBody.scrollTop = chatMain.scrollHeight;
 }
-// sendBTN.addEventListener('click', sendMessage);
-// inputMSG.addEventListener('keypress', (event) => {
-//     if (event.key === 'Enter') {
-//         sendMessage();
-//        // search_box();
-//     }
-// });
+
+
+
 
 function receiveMessages() {
     
@@ -184,7 +180,7 @@ emailResultList.textContent=userData.email;
 emailResultList.classList.add("resultList");// CSS
 emailResultList.onclick=()=>{
     selectUser(userData.email);
-    userChatOpen();
+    userChatOpen(userData);
 
 }
 searchResults.appendChild(emailResultList);
@@ -223,9 +219,9 @@ searchResults.innerHTML="";
 else{
         console.error("Elemnt withe searchBoxID",error);
     }
+///////////////////////////////////////////////////////////
 
-
-function userChatOpen(){
+function userChatOpen(reciverData){
 chatMain.innerHTML="";
 let bottomAreaDiv=document.createElement("div");
 bottomAreaDiv.classList.add("bottomArea");
@@ -236,14 +232,40 @@ bottomAreaDiv.innerHTML=`<input type="text" placeholder="Type your message" id="
 let topAreaDiv=document.createElement("div");
 topAreaDiv.classList.add("topArea");
 topAreaDiv.innerHTML=`<p id="appNameTop">Connect IT</p>
-                <img src="logout.png" id="logoutIMG">`
+                <img src="logout.png" id="logoutIMG">`;
 chatMain.append(topAreaDiv);
 
+let topUnderAreaDiv=document.createElement("div");
+topUnderAreaDiv.innerHTML=` <img src="" id="reciverIMG">
+<p id="reciverName"></p>`;
+chatMain.append(topUnderAreaDiv);
 
-                
+console.log(reciverData.userName);
+document.getElementById("reciverName").innerText=reciverData.userName;
+document.getElementById("reciverIMG").src="../asset/img/unknown.png";
 
+let messageBodyDiv=document.createElement("div");
+messageBodyDiv.classList.add("messageBody");
+messageBodyDiv.id="messageBody";
+chatMain.append(messageBodyDiv);
+
+const messageBody=document.getElementById("messageBody");
+const reciverName=document.getElementById("reciverName");
+const reciverIMG=document.getElementById("reciverIMG");
+
+const inputMSG = document.getElementById("inputMSG");
+const sendBTN = document.getElementById("sendBTN");
+
+sendBTN.addEventListener('click', sendMessage);
+inputMSG.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter') {
+        sendMessage();
+       // search_box();
     }
-
+});
+    }
+    
+///////////////////////////////////////
 // for(let key in storeUser){
 //     let userData=storeUser[key].email
 //     if(){
