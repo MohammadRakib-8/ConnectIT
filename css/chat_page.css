@@ -1,4 +1,4 @@
-/* General Styles */
+
 * {
   margin: 0;
   padding: 0;
@@ -102,30 +102,28 @@ body {
   color: #000;
 }
 
-/* Styling for the receiver's name */
 #reciverName {
   font-size: 20px;
   font-weight: lighter;
   color: #000;
-  margin-left: 10px; /* Adds a little space between the image and the name */
-  display: inline-block; /* Keeps the name on the same line as the image */
-  vertical-align: middle; /* Aligns the name vertically with the image */
+  margin-left: 10px; 
+  display: inline-block; 
+  vertical-align: middle; 
 }
 
-/* Styling for the receiver's image */
+
 #reciverIMG {
   width: 30px;
   height: 30px;
-  border-radius: 50%; /* Makes the image circular */
+  border-radius: 50%; 
   cursor: pointer;
   transition: transform 0.2s ease-in-out;
-  border: 2px solid #ddd; /* Adds a subtle border around the image */
-  object-fit: cover; /* Ensures the image fits nicely inside the container */
+  border: 2px solid #ddd; 
+  object-fit: cover; 
 }
 
-/* Hover effect for receiver's image */
 #reciverIMG:hover {
-  transform: scale(1.1); /* Slightly enlarges the image when hovered */
+  transform: scale(1.1); 
 }
 
 #logoutIMG {
@@ -139,7 +137,7 @@ body {
   transform: scale(1.1);
 }
 
-/* Top Area */
+
 .topArea {
   display: flex;
   justify-content: space-between;
@@ -157,7 +155,7 @@ body {
   color: #fff;
 }
 
-/* Bottom Area */
+
 .bottomArea {
   display: flex;
   justify-content: space-between;
@@ -200,7 +198,7 @@ body {
   background-color: #005a9e;
 }
 
-/* Message Styling */
+
 .messageBody {
   flex-grow: 1;
   overflow-y: auto;
@@ -263,7 +261,6 @@ body {
   margin: 5px 0;
 }
 
-/* Responsive Styles */
 @media (max-width: 768px) {
   .chat-container {
     flex-direction: column;

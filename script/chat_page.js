@@ -86,18 +86,31 @@ onAuthStateChanged(auth, (user) => {
 
 const messagesRef = ref(database, 'PersonalMSG'); //1s para-indicates work with realtime database  //2nd para-indicate the node where chat stored   //messagesRef will point to the location in your Firebase database
 //send MSG
-function sendMessage() {
+function sendMessage(reciver) {
     const messageText = inputMSG.value.trim(); 
-
+const senderUID=currentUser.uid;
+const reciverUID=reciver.userName;
+console.log("reciver UID",reciverUID);  //debug 
+// console.log("sender UID.",currentUser.uid);//debug
     if (messageText === '') return; 
 
     const messageData = {
-        text: messageText,
+     ChatRoom:{
+        MSG:{
+        msg: messageText,
         timestamp: Date.now(),
-        user: {
-            name: currentUser.displayName || "Anonymous", // Default to 'Anonymous' (if no name i get from)
-            //img: userIMG.src || "" // Default to an empty string if no image
+        
+     },
+    profiles:{
+         User:{senderNM:currentUser.displayName,
+            senderUID: currentUser.uid , // Default to 'Anonymous' (if no name i get from)
+           reciverNM:reciver.userName,  
+            reciverUID:reciver.uid
+        //img: userIMG.src || "" // Default to an empty string if no image
+
         }
+        
+    }}
     };
 
     push(messagesRef, messageData)
@@ -149,8 +162,7 @@ function receiveMessages() {
         messageBody.scrollTop = messageBody.scrollHeight;
     });
 }
-
-// receiveMessages();
+ receiveMessages();
 
 
 const messageRefRakibLogin=ref(database,'LoginInfo');
@@ -241,6 +253,7 @@ topUnderAreaDiv.innerHTML=` <img src="" id="reciverIMG">
 chatMain.append(topUnderAreaDiv);
 
 console.log(reciverData.userName);
+console.log("reciverUUUUID",reciverData.uid)
 document.getElementById("reciverName").innerText=reciverData.userName;
 document.getElementById("reciverIMG").src="../asset/img/unknown.png";
 
@@ -256,10 +269,12 @@ const reciverIMG=document.getElementById("reciverIMG");
 const inputMSG = document.getElementById("inputMSG");
 const sendBTN = document.getElementById("sendBTN");
 
-sendBTN.addEventListener('click', sendMessage);
+sendBTN.addEventListener('click', ()=>sendMessage(reciverData));//reciverData pass er passing val
 inputMSG.addEventListener('keypress', (event) => {
     if (event.key === 'Enter') {
-        sendMessage();
+        sendMessage(reciverData);
+    
+        receiveMessages();
        // search_box();
     }
 });

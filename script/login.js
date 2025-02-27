@@ -60,6 +60,8 @@ else{
     const rakibAccData={
         userName:userRakib.displayName,
         email:userRakib.email,
+        pic:userRakib.photoURL,
+        uid:userRakib.uid
         };
         
          push(messageRefRakibLogin, rakibAccData)
