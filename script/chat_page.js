@@ -97,18 +97,20 @@ console.log("reciver UID",reciverUID);  //debug
     const messageData = {
      ChatRoom:{
         MSG:{
+        name:currentUser.displayName,
+        uid:currentUser.uid,
         msg: messageText,
         timestamp: Date.now(),
         
      },
     profiles:{
-         User:{senderNM:currentUser.displayName,
+         senderNM:currentUser.displayName,
             senderUID: currentUser.uid , // Default to 'Anonymous' (if no name i get from)
            reciverNM:reciver.userName,  
             reciverUID:reciver.uid
         //img: userIMG.src || "" // Default to an empty string if no image
 
-        }
+        
         
     }}
     };
@@ -127,15 +129,15 @@ console.log("reciver UID",reciverUID);  //debug
         const messageDiv = document.createElement("div");
         messageDiv.classList.add('message', 'sent');
         messageDiv.innerHTML = `
-            <span class="user-name">${messageData.user.name}</span>
+            <span class="user-name">${messageData.ChatRoom.MSG.name}</span>
             <p>${messageText}</p>
-            <span>${new Date(messageData.timestamp).toLocaleTimeString()}</span>
+            <span>${new Date(messageData.ChatRoom.MSG.timestamp).toLocaleTimeString()}</span>
                
 `;
         
         messageBody.appendChild(messageDiv);
         inputMSG.value = "";
-        messageBody.scrollTop = chatMain.scrollHeight;
+       messageBody.scrollTop = chatMain.scrollHeight;
 }
 
 
@@ -262,9 +264,9 @@ messageBodyDiv.classList.add("messageBody");
 messageBodyDiv.id="messageBody";
 chatMain.append(messageBodyDiv);
 
-const messageBody=document.getElementById("messageBody");
-const reciverName=document.getElementById("reciverName");
-const reciverIMG=document.getElementById("reciverIMG");
+// const messageBody=document.getElementById("messageBody");
+// const reciverName=document.getElementById("reciverName");
+// const reciverIMG=document.getElementById("reciverIMG");
 
 const inputMSG = document.getElementById("inputMSG");
 const sendBTN = document.getElementById("sendBTN");
