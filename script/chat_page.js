@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebas
 import { getDatabase, ref, push,set,get,equalTo,orderByChild,query } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
 import { onChildAdded ,orderByKey } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
 //import { getAuth } from  "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+import { getAuth,signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
 // import {messageRefRakibLogin}from "../script/login.js";
 const firebaseConfig = {
     apiKey: "AIzaSyC51WaB_HGCmQGABrEFxc3hWBdkUEVnkyI",
@@ -40,6 +40,7 @@ const searchBox=document.getElementById("searchBox");
 const searchResults=document.getElementById("searchResults");
 const chatMain=document.getElementsByClassName("chat-main")[0];
 //const fullAreaDiv=document.getElementsByClassName("fullArea")[0];
+const logoutBtn=document.getElementById("logout")
 let currentUser=null;
 
 
@@ -92,9 +93,10 @@ console.log("reciver UID",reciverUID);  //debug
 
 
 const roomID=[currentUser.uid,reciver.uid].sort().join('_');
+const currentUserUID=currentUser.uid;
 
 const roomIDRef = ref(database, `PersonalMSG/${roomID}`); //1s para-indicates work with realtime database  //2nd para-indicate the node where chat stored   //messagesRef will point to the location in your Firebase database
-const messageRef = ref(database,`PersonalMSG/${roomID}/Chat`)   ;
+const messageRef = ref(database,`PersonalMSG/${roomID}/Chat/${currentUserUID}`)   ;
 if (messageText === '') return; 
 //const queryChatRoom =query();////////////////
 
@@ -218,7 +220,7 @@ else{
 
 
 
-function receiveMessages() {
+function receiveMessages(currentUser) {
     
     onChildAdded(messagesRef, (snapshot) => {
         const messageData = snapshot.val(); 
@@ -229,7 +231,7 @@ function receiveMessages() {
         messageDiv.innerHTML = `
             <div class="message-header">
                 <img src="${messageData.user.img || 'default-avatar.png'}" alt="User Image" class="user-img">
-                <span class="user-name">${messageData.user.displayName}</span>
+                <span class="user-name">${messageData.currentUser.msg}</span>
                 <span class="timestamp">${new Date(messageData.timestamp).toLocaleTimeString()}</span>
             </div>
             <p>${messageData.text}</p>
@@ -345,6 +347,7 @@ chatMain.append(messageBodyDiv);
 
 const inputMSG = document.getElementById("inputMSG");
 const sendBTN = document.getElementById("sendBTN");
+const logout=document.getElementById("logoutIMG");
 
 sendBTN.addEventListener('click', ()=>sendMessage(reciverData));//reciverData pass er passing val
 inputMSG.addEventListener('keypress', (event) => {
@@ -381,4 +384,29 @@ inputMSG.addEventListener('keypress', (event) => {
 // });
 
 
+
+logoutBtn.addEventListener('click',()=>{
+    signOut(auth)
+    .then(()=>{
+        console.log("Sucessfully SignOut");
+        localStorage.clear();
+        sessionStorage.clear();
+        document.cookie="";
+//window.location.href='../login.html';
+
+//window.location.href="https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri=" + encodeURIComponent("../login.html");
+const logoutURL = "https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri=" + 
+encodeURIComponent("http://127.0.0.1:5500/login.html");  
+window.location.replace(logoutURL);
+// const logoutURL="https://login.microsoftonline.com/common/oauth2/v2.0/logout";
+// window.location.replace(logout);
+// setTimeout(()=>{
+//     window.location.href="./login.html"; },2000);
+ })
+
+    .catch((error)=>{
+console.error("Error occured in logout",error);
+    });
+
+});
 
