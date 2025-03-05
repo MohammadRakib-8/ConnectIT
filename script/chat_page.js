@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
-import { getDatabase, ref, push,get,equalTo,orderByChild,query } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
-import { onChildAdded } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
+import { getDatabase, ref, push,set,get,equalTo,orderByChild,query } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
+import { onChildAdded ,orderByKey } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
 //import { getAuth } from  "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
 // import {messageRefRakibLogin}from "../script/login.js";
@@ -82,9 +82,6 @@ onAuthStateChanged(auth, (user) => {
 
 
 
-
-
-const messagesRef = ref(database, 'PersonalMSG'); //1s para-indicates work with realtime database  //2nd para-indicate the node where chat stored   //messagesRef will point to the location in your Firebase database
 //send MSG
 function sendMessage(reciver) {
     const messageText = inputMSG.value.trim(); 
@@ -92,30 +89,99 @@ const senderUID=currentUser.uid;
 const reciverUID=reciver.userName;
 console.log("reciver UID",reciverUID);  //debug 
 // console.log("sender UID.",currentUser.uid);//debug
-    if (messageText === '') return; 
 
+
+const roomID=[currentUser.uid,reciver.uid].sort().join('_');
+
+const roomIDRef = ref(database, `PersonalMSG/${roomID}`); //1s para-indicates work with realtime database  //2nd para-indicate the node where chat stored   //messagesRef will point to the location in your Firebase database
+const messageRef = ref(database,`PersonalMSG/${roomID}/Chat`)   ;
+if (messageText === '') return; 
+//const queryChatRoom =query();////////////////
+
+const profileUserRoomInfo=ref(database,`PersonalMSG`);
+const queryUserRoomID=query(profileUserRoomInfo,orderByKey(),equalTo(roomID));
+get(queryUserRoomID)
+.then((snapshot)=>{
+    if(snapshot.exists()){
+       const profilesVal=snapshot.val();
+        console.log("Snapshots exist of profiles")
+//const profilesVal.senderUID==currentUser.uid
+
+// if(profilesVal.senderUID==currentUser.uid && profilesVal.reciverUID==reciver.uid)
+// {
+//     console.log("Two uid exist");
+// }    
+// else{
+//     console.log("Not exist two uid");
+
+    
+// }
+
+const messageData = {
+    name:currentUser.displayName,
+    uid:currentUser.uid,
+    msg: messageText,
+    timestamp: Date.now(),
+    
+};
+
+push(messageRef, messageData)
+    .then(() => {
+        console.log('Message successfully sent to Firebase');
+
+      
+    })
+    .catch((error) => {
+        console.error('Error sending message to Firebase:', error);
+        alert('Message could not be sent. Please try again.');
+    });
+
+    const messageDiv = document.createElement("div");
+    messageDiv.classList.add('message', 'sent');
+    messageDiv.innerHTML = `
+        <span class="user-name">${messageData.name}</span>
+        <p>${messageText}</p>
+        <span>${new Date(messageData.timestamp).toLocaleTimeString()}</span>
+           
+`;
+    
+    messageBody.appendChild(messageDiv);
+    inputMSG.value = "";
+   messageBody.scrollTop = chatMain.scrollHeight;
+
+
+
+}
+
+else{
+    console.log("No snapshot data exist of profiles");////////////////////////////////////////////////////////////
     const messageData = {
-     ChatRoom:{
-        MSG:{
         name:currentUser.displayName,
         uid:currentUser.uid,
         msg: messageText,
         timestamp: Date.now(),
         
-     },
-    profiles:{
+     };
+     push(messageRef,messageData)
+     .then(()=>
+    {
+        console.log("Sucessfully store data on firebase");
+    })
+    .catch((error)=>{
+        console.error("Error Occurred  for storing data on firebase",error);
+    });
+    const profileData ={
          senderNM:currentUser.displayName,
+         senderEmail:currentUser.email,
             senderUID: currentUser.uid , // Default to 'Anonymous' (if no name i get from)
-           reciverNM:reciver.userName,  
+           reciverNM:reciver.userName, 
+           reciverEmail:reciver.email, 
             reciverUID:reciver.uid
         //img: userIMG.src || "" // Default to an empty string if no image
-
         
-        
-    }}
     };
 
-    push(messagesRef, messageData)
+    set(roomIDRef,{Profiles:profileData})
         .then(() => {
             console.log('Message successfully sent to Firebase');
 
@@ -138,7 +204,16 @@ console.log("reciver UID",reciverUID);  //debug
         messageBody.appendChild(messageDiv);
         inputMSG.value = "";
        messageBody.scrollTop = chatMain.scrollHeight;
+    
 }
+
+})
+.catch((error)=>{
+    console.error("Profiles data fetcbhing error",error)
+});
+
+}
+
 
 
 
@@ -164,7 +239,7 @@ function receiveMessages() {
         messageBody.scrollTop = messageBody.scrollHeight;
     });
 }
- receiveMessages();
+ //receiveMessages();
 
 
 const messageRefRakibLogin=ref(database,'LoginInfo');
@@ -276,7 +351,7 @@ inputMSG.addEventListener('keypress', (event) => {
     if (event.key === 'Enter') {
         sendMessage(reciverData);
     
-        receiveMessages();
+        //receiveMessages();
        // search_box();
     }
 });
