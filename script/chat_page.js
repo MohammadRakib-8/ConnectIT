@@ -87,7 +87,7 @@ onAuthStateChanged(auth, (user) => {
 function sendMessage(reciver) {
     const messageText = inputMSG.value.trim(); 
 const senderUID=currentUser.uid;
-const reciverUID=reciver.userName;
+const reciverUID=reciver.uid;
 console.log("reciver UID",reciverUID);  //debug 
 // console.log("sender UID.",currentUser.uid);//debug
 
@@ -95,8 +95,9 @@ console.log("reciver UID",reciverUID);  //debug
 const roomID=[currentUser.uid,reciver.uid].sort().join('_');
 const currentUserUID=currentUser.uid;
 
-const roomIDRef = ref(database, `PersonalMSG/${roomID}`); //1s para-indicates work with realtime database  //2nd para-indicate the node where chat stored   //messagesRef will point to the location in your Firebase database
-const messageRef = ref(database,`PersonalMSG/${roomID}/Chat/${currentUserUID}`)   ;
+
+const roomIDRef = ref(database, `PersonalMSG/${roomID}/Profiles`); //1s para-indicates work with realtime database  //2nd para-indicate the node where chat stored   //messagesRef will point to the location in your Firebase database
+const messageRef = ref(database,`PersonalMSG/${roomID}/Chat/${reciverUID}`)   ;
 if (messageText === '') return; 
 //const queryChatRoom =query();////////////////
 
@@ -120,8 +121,8 @@ get(queryUserRoomID)
 // }
 
 const messageData = {
-    name:currentUser.displayName,
     uid:currentUser.uid,
+    name:currentUser.displayName,
     msg: messageText,
     timestamp: Date.now(),
     
@@ -158,8 +159,8 @@ push(messageRef, messageData)
 else{
     console.log("No snapshot data exist of profiles");////////////////////////////////////////////////////////////
     const messageData = {
-        name:currentUser.displayName,
         uid:currentUser.uid,
+        name:currentUser.displayName,
         msg: messageText,
         timestamp: Date.now(),
         
@@ -172,26 +173,44 @@ else{
     .catch((error)=>{
         console.error("Error Occurred  for storing data on firebase",error);
     });
-    const profileData ={
-         senderNM:currentUser.displayName,
-         senderEmail:currentUser.email,
-            senderUID: currentUser.uid , // Default to 'Anonymous' (if no name i get from)
-           reciverNM:reciver.userName, 
-           reciverEmail:reciver.email, 
-            reciverUID:reciver.uid
+    const profileData1 ={
+       
+         name:currentUser.displayName,
+         email:currentUser.email,
+        uid: currentUser.uid      
+            // Default to 'Anonymous' (if no name i get from)
+    };   
+    const profileData2={
+        name:reciver.userName, 
+        email:reciver.email, 
+        uid:reciver.uid};
+    
         //img: userIMG.src || "" // Default to an empty string if no image
         
-    };
 
-    set(roomIDRef,{Profiles:profileData})
-        .then(() => {
-            console.log('Message successfully sent to Firebase');
+
+    // set(roomIDRef,{Profiles:profileData1})
+    //     .then(() => {
+    //         console.log('Message successfully sent to Firebase');
 
           
+    //     })
+    //     .catch((error) => {
+    //         console.error('Error sending message to Firebase:', error);
+    //         alert('Message could not be sent. Please try again.');
+    //     });
+
+        
+ set(roomIDRef,{
+        [profileData1.uid]: profileData1,
+        [profileData2.uid]: profileData2
+    })
+        .then(() => {
+            console.log('Profiles successfully stored in Firebase');
         })
         .catch((error) => {
-            console.error('Error sending message to Firebase:', error);
-            alert('Message could not be sent. Please try again.');
+            console.error('Error storing profiles in Firebase:', error);
+            alert('Profiles could not be stored. Please try again.');
         });
 
         const messageDiv = document.createElement("div");
@@ -399,7 +418,7 @@ const logoutURL = "https://login.microsoftonline.com/common/oauth2/v2.0/logout?p
 encodeURIComponent("http://127.0.0.1:5500/login.html");  
 window.location.replace(logoutURL);
 // const logoutURL="https://login.microsoftonline.com/common/oauth2/v2.0/logout";
-// window.location.replace(logout);
+// window.location.replace(logout); 
 // setTimeout(()=>{
 //     window.location.href="./login.html"; },2000);
  })
@@ -407,6 +426,5 @@ window.location.replace(logoutURL);
     .catch((error)=>{
 console.error("Error occured in logout",error);
     });
-
 });
 
