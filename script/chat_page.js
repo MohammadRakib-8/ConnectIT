@@ -133,7 +133,7 @@ const messageData = {
     
 };
 
-set(messageRef, messageData)
+push(messageRef, messageData)
     .then(() => {
         console.log('Message successfully sent to Firebase');
 
@@ -306,30 +306,23 @@ if(snapshot.exists()){
 
                             onChildAdded(messageRef, (snapshot) => {
                                         const messageData = snapshot.val(); 
-// const messageNodeKey=snapshot.key;
-                                        // get(messageNodeKey)
-                                            // .then(()=>{
-                                                console.log("Message Data",messageData );
+                                        console.log(messageData.name);
                                 
-                                                const messageDiv = document.createElement("div");
-                                                messageDiv.classList.add('message', 'received');
-                                        
-                                                messageDiv.innerHTML = `
-                                                    <div class="message-header">
-                                                 
-                                                        <span class="user-name">${messageData.name}</span>
-                                                        <span class="timestamp">${new Date(messageData.timestamp).toLocaleTimeString()}</span>
-                                                    </div>
-                                                    <p>${messageData.msg}</p>
-                                                `;
-                                        
-                                                messageBody.appendChild(messageDiv);
-                                                messageBody.scrollTop = messageBody.scrollHeight;
-                                            })
-
-                                        
-                                        
-                                    // });
+                                        const messageDiv = document.createElement("div");
+                                        messageDiv.classList.add('message', 'received');
+                                
+                                        messageDiv.innerHTML = `
+                                            <div class="message-header">
+                                         
+                                                <span class="user-name">${messageData.name}</span>
+                                                <span class="timestamp">${new Date(messageData.timestamp).toLocaleTimeString()}</span>
+                                            </div>
+                                            <p>${messageData.msg}</p>
+                                        `;
+                                
+                                        messageBody.appendChild(messageDiv);
+                                        messageBody.scrollTop = messageBody.scrollHeight;
+                                    });
 
                         }
                     //}
