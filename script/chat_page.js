@@ -42,6 +42,10 @@ const chatMain=document.getElementsByClassName("chat-main")[0];
 //const fullAreaDiv=document.getElementsByClassName("fullArea")[0];
 const logoutBtn=document.getElementById("logout")
 let currentUser=null;
+let reciverDataa="";
+let roomID="";
+let currentUserUID="";
+
 
 
 
@@ -85,6 +89,7 @@ onAuthStateChanged(auth, (user) => {
 
 //send MSG
 function sendMessage(reciver) {
+    receiveMessages();
     const messageText = inputMSG.value.trim(); 
 const senderUID=currentUser.uid;
 const reciverUID=reciver.uid;
@@ -92,8 +97,8 @@ console.log("reciver UID",reciverUID);  //debug
 // console.log("sender UID.",currentUser.uid);//debug
 
 
-const roomID=[currentUser.uid,reciver.uid].sort().join('_');
-const currentUserUID=currentUser.uid;
+roomID=[currentUser.uid,reciver.uid].sort().join('_');
+ currentUserUID=currentUser.uid;
 
 
 const roomIDRef = ref(database, `PersonalMSG/${roomID}/Profiles`); //1s para-indicates work with realtime database  //2nd para-indicate the node where chat stored   //messagesRef will point to the location in your Firebase database
@@ -128,7 +133,7 @@ const messageData = {
     
 };
 
-push(messageRef, messageData)
+set(messageRef, messageData)
     .then(() => {
         console.log('Message successfully sent to Firebase');
 
@@ -239,28 +244,135 @@ else{
 
 
 
-function receiveMessages(currentUser) {
+// function receiveMessages(reciver) {
     
-    onChildAdded(messagesRef, (snapshot) => {
-        const messageData = snapshot.val(); 
+//     onChildAdded(messagesRef, (snapshot) => {
+//         const messageData = snapshot.val(); 
 
-        const messageDiv = document.createElement("div");
-        messageDiv.classList.add('message', 'received');
+//         const messageDiv = document.createElement("div");
+//         messageDiv.classList.add('message', 'received');
 
-        messageDiv.innerHTML = `
-            <div class="message-header">
-                <img src="${messageData.user.img || 'default-avatar.png'}" alt="User Image" class="user-img">
-                <span class="user-name">${messageData.currentUser.msg}</span>
-                <span class="timestamp">${new Date(messageData.timestamp).toLocaleTimeString()}</span>
-            </div>
-            <p>${messageData.text}</p>
-        `;
+//         messageDiv.innerHTML = `
+//             <div class="message-header">
+//                 <img src="${messageData.user.img || 'default-avatar.png'}" alt="User Image" class="user-img">
+//                 <span class="user-name">${messageData.currentUser.msg}</span>
+//                 <span class="timestamp">${new Date(messageData.timestamp).toLocaleTimeString()}</span>
+//             </div>
+//             <p>${messageData.text}</p>
+//         `;
 
-        messageBody.appendChild(messageDiv);
-        messageBody.scrollTop = messageBody.scrollHeight;
-    });
-}
+//         messageBody.appendChild(messageDiv);
+//         messageBody.scrollTop = messageBody.scrollHeight;
+//     });
+// }
  //receiveMessages();
+//  function displayMSG(){
+//     const msgDiv = document.createElement("div");
+//     msgDiv.classList.add("msgdiv");
+//     msgDiv.innerHTML=`<span class="user-name">${message}<span`
+
+
+//  }
+
+function receiveMessages(){
+    console.log("INSIDE RECIVE FUNCTION");
+    const roomIDRef = ref(database, `PersonalMSG`); //1s para-indicates work with realtime database  //2nd para-indicate the node where chat stored   //messagesRef will point to the location in your Firebase database
+const messageRef = ref(database,`PersonalMSG/${roomID}/Chat`) ; 
+//const queryData=query(roomIDRef,orderByKey(),equalTo(roomID));
+get(roomIDRef)
+.then((snapshot)=>
+{
+if(snapshot.exists()){
+    snapshot.forEach((childsnapshot)=>
+    {//console.log("roomID",roomID);
+        const childK=childsnapshot.key;
+        //const childData=childsnapshot.val();
+       
+        //console.log("Childnode",childK);
+        if(childK===roomID){
+            console.log("Match node",childK);
+            //console.log("reciver uid",reciverDataa.uid);
+            const messageRef = ref(database,`PersonalMSG/${roomID}/Chat`) ; 
+            get(messageRef)
+            .then((snapshot)=>{
+                if(snapshot.exists()){
+                snapshot.forEach((childsnapshot)=>{
+                    const nodekey=childsnapshot.key;
+                    // if (nodekey===reciv;erDataa.uid){
+                        console.log("Currentuser uid ",currentUserUID);
+                        if(currentUserUID===nodekey){
+                            console.log("You got IT !..........");
+
+
+                            onChildAdded(messageRef, (snapshot) => {
+                                        const messageData = snapshot.val(); 
+// const messageNodeKey=snapshot.key;
+                                        // get(messageNodeKey)
+                                            // .then(()=>{
+                                                console.log("Message Data",messageData );
+                                
+                                                const messageDiv = document.createElement("div");
+                                                messageDiv.classList.add('message', 'received');
+                                        
+                                                messageDiv.innerHTML = `
+                                                    <div class="message-header">
+                                                 
+                                                        <span class="user-name">${messageData.name}</span>
+                                                        <span class="timestamp">${new Date(messageData.timestamp).toLocaleTimeString()}</span>
+                                                    </div>
+                                                    <p>${messageData.msg}</p>
+                                                `;
+                                        
+                                                messageBody.appendChild(messageDiv);
+                                                messageBody.scrollTop = messageBody.scrollHeight;
+                                            })
+
+                                        
+                                        
+                                    // });
+
+                        }
+                    //}
+                    else{console.log("No Chidnode of reciver uid exists");}
+                })}
+            })
+                
+.catch((error)=>{
+console.error("Error occured for reciver uid query condition here",error);
+});
+               
+            
+            //console.log("Match Node",childK);
+        }
+        else{
+            // console.log("Not Match");
+        }
+    })
+
+            // Extract the child nodes inside `PersonalMSG/${roomID}`
+            // const roomData = snapshot.val();
+            
+            // // Assuming you want to get the 'Chat' node specifically
+            // const chatData = roomData.PersonalMSG; 
+
+            // console.log("Chat node data:", chatData);
+}
+else{
+    console.log("RoomID not match");
+}
+})
+.catch((error)=>
+{
+    console.error("Error occured",error);
+});
+    // onChildAdded(messagz)
+    // if(reciverUID===currentUser.uid){
+    // const msgDiv=document.createElement("div");
+    // msgDiv.classList.add("recivemsg");
+    // msgDiv.innerHTML=`<span class="user-name">${messageData.dispaly}</span>`
+    // }
+   
+}
 
 
 const messageRefRakibLogin=ref(database,'LoginInfo');
@@ -332,6 +444,7 @@ else{
 ///////////////////////////////////////////////////////////
 
 function userChatOpen(reciverData){
+    reciverDataa=reciverData;
 chatMain.innerHTML="";
 let bottomAreaDiv=document.createElement("div");
 bottomAreaDiv.classList.add("bottomArea");
@@ -373,7 +486,7 @@ inputMSG.addEventListener('keypress', (event) => {
     if (event.key === 'Enter') {
         sendMessage(reciverData);
     
-        //receiveMessages();
+   
        // search_box();
     }
 });
