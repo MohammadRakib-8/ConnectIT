@@ -5,7 +5,7 @@ import { onChildAdded ,orderByKey } from "https://www.gstatic.com/firebasejs/11.
 import { getAuth,signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
 // import {messageRefRakibLogin}from "../script/login.js";
 const firebaseConfig = {
-    apiKey: "AIzaSyC51WaB_HGCmQGABrEFxc3hWBdkUEVnkyI",
+    apiKey: "AIzaSyC51WaB_HGCmQGABrEFxc3hWBdkUEVnkyI", //I use it for testing purpose Bro :)
     authDomain: "app1-ed7d8.firebaseapp.com",
     databaseURL: "https://app1-ed7d8-default-rtdb.firebaseio.com",
     projectId: "app1-ed7d8",

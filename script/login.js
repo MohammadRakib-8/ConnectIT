@@ -4,7 +4,7 @@ import { getAuth, signInWithPopup, OAuthProvider } from "https://www.gstatic.com
 import { getDatabase, ref,get, push,query,orderByChild,equalTo} from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyC51WaB_HGCmQGABrEFxc3hWBdkUEVnkyI",
+    apiKey: "AIzaSyC51WaB_HGCmQGABrEFxc3hWBdkUEVnkyI",//I use it for testing purpose Bro :)
     authDomain: "app1-ed7d8.firebaseapp.com",
     databaseURL: "https://app1-ed7d8-default-rtdb.firebaseio.com",
     projectId: "app1-ed7d8",
