@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
-import { getDatabase, ref, push,set,get,equalTo,orderByChild,query } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
+import { getDatabase, ref, push,off,set,get,equalTo,orderByChild,query } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
 import { onChildAdded ,orderByKey } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
 //import { getAuth } from  "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
 import { getAuth,signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
@@ -89,7 +89,7 @@ onAuthStateChanged(auth, (user) => {
 
 //send MSG
 function sendMessage(reciver) {
-    receiveMessages();
+    receiveMessages(reciver);
     const messageText = inputMSG.value.trim(); 
 const senderUID=currentUser.uid;
 const reciverUID=reciver.uid;
@@ -274,7 +274,10 @@ else{
 
 //  }
 
-function receiveMessages(){
+
+
+function receiveMessages(reciverR){
+    const reciverUID=reciverR.uid
     console.log("INSIDE RECIVE FUNCTION");
     const roomIDRef = ref(database, `PersonalMSG`); //1s para-indicates work with realtime database  //2nd para-indicate the node where chat stored   //messagesRef will point to the location in your Firebase database
 const messageRef = ref(database,`PersonalMSG/${roomID}/Chat`) ; 
@@ -303,10 +306,34 @@ if(snapshot.exists()){
                         if(currentUserUID===nodekey){
                             console.log("You got IT !..........");
 
+                            const messageRefRR = ref(database,`PersonalMSG/${roomID}/Chat/${reciverUID}`);
+                            onChildAdded(messageRefRR, (snapshot) => {
+                                        const messageData= snapshot.val();
+                                        // const messageDataR=snapshot.v
+                                        // snapshot.on((childsnapshot)=>{
+                                        //     const val=childsnapshot.val();
+                                             const lastMSGKey=snapshot.key;
+                                     
+                                            //  const lastMessageRef = ref(database, `PersonalMSG/${roomID}/Chat/${reciverUID}/${lastMSGKey}`);
+                                             
 
-                            onChildAdded(messageRef, (snapshot) => {
-                                        const messageData = snapshot.val(); 
-                                        console.log(messageData.name);
+
+
+
+                                            //  get(lastMessageRef).then((snapshot)=>{
+                                            //  if(snapshot.exist()){
+                                            //     const messageData= snapshot.val();
+                                            //     console.log("Name..............",messageData);
+                                            //  }
+
+                                                
+                                                   
+
+                                            //  })
+                                        // const messageReciverNode=snapshot.key;
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////const messageData=snapshot.key;
+
                                 
                                         const messageDiv = document.createElement("div");
                                         messageDiv.classList.add('message', 'received');
@@ -322,6 +349,9 @@ if(snapshot.exists()){
                                 
                                         messageBody.appendChild(messageDiv);
                                         messageBody.scrollTop = messageBody.scrollHeight;
+                                    // })
+                                    off(messageRefRR);
+                                    console.log("Listener detached after first message.");
                                     });
 
                         }
